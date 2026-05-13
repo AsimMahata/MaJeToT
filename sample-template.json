@@ -1,0 +1,79 @@
+{
+  "title": "Placement Prep 20255",
+  "sections": [
+    {
+      "id": "os",
+      "title": "Operating Systems",
+      "color": "#6366f1",
+      "topics": [
+        { "id": "os-1", "label": "Process vs Program vs Thread" },
+        { "id": "os-2", "label": "CPU Scheduling — FCFS, SJF, Round Robin" },
+        { "id": "os-3", "label": "Process Synchronization — Semaphores, Mutex" },
+        { "id": "os-4", "label": "Deadlock — Prevention, Avoidance, Detection" },
+        { "id": "os-5", "label": "Memory Management — Paging, Segmentation" },
+        { "id": "os-6", "label": "Virtual Memory & Page Replacement" },
+        { "id": "os-7", "label": "File Systems — FAT, NTFS, inode" },
+        { "id": "os-8", "label": "Disk Scheduling — FCFS, SSTF, SCAN" }
+      ],
+      "lectures": { "label": "Gate Smashers OS Playlist", "total": 120 }
+    },
+    {
+      "id": "dsa",
+      "title": "Data Structures & Algorithms",
+      "color": "#10b981",
+      "topics": [
+        { "id": "dsa-1", "label": "Arrays — sliding window, prefix sums" },
+        { "id": "dsa-2", "label": "Linked Lists — reversal, cycle detection" },
+        { "id": "dsa-3", "label": "Stacks & Queues — monotonic stack, deque" },
+        { "id": "dsa-4", "label": "Binary Trees — traversals, LCA" },
+        { "id": "dsa-5", "label": "BST — insertion, deletion, balancing" },
+        { "id": "dsa-6", "label": "Heaps & Priority Queues" },
+        { "id": "dsa-7", "label": "Graphs — BFS, DFS, topological sort" },
+        { "id": "dsa-8", "label": "Dynamic Programming — 1D, 2D, knapsack" },
+        { "id": "dsa-9", "label": "Greedy Algorithms" },
+        { "id": "dsa-10", "label": "Tries & Segment Trees" }
+      ],
+      "lectures": { "label": "Striver A2Z", "total": 200 }
+    },
+    {
+      "id": "dbms",
+      "title": "Database Management",
+      "color": "#f97316",
+      "topics": [
+        { "id": "dbms-1", "label": "ER Model & Relational Model" },
+        { "id": "dbms-2", "label": "SQL — Joins, Subqueries, Aggregates" },
+        { "id": "dbms-3", "label": "Normalization — 1NF to BCNF" },
+        { "id": "dbms-4", "label": "Transactions — ACID, Serializability" },
+        { "id": "dbms-5", "label": "Concurrency Control — Locking, MVCC" },
+        { "id": "dbms-6", "label": "Indexing — B-Tree, Hashing" }
+      ],
+      "lectures": { "label": "Gate Smashers DBMS Playlist", "total": 80 }
+    },
+    {
+      "id": "cn",
+      "title": "Computer Networks",
+      "color": "#ec4899",
+      "topics": [
+        { "id": "cn-1", "label": "OSI & TCP/IP Models" },
+        { "id": "cn-2", "label": "HTTP, HTTPS, DNS, DHCP" },
+        { "id": "cn-3", "label": "TCP vs UDP — 3-way handshake" },
+        { "id": "cn-4", "label": "IP Addressing & Subnetting" },
+        { "id": "cn-5", "label": "Routing — RIP, OSPF, BGP" },
+        { "id": "cn-6", "label": "Network Security — Firewalls, SSL/TLS" }
+      ],
+      "lectures": { "label": "Gate Smashers CN Playlist", "total": 90 }
+    },
+    {
+      "id": "oops",
+      "title": "OOP & System Design",
+      "color": "#8b5cf6",
+      "topics": [
+        { "id": "oops-1", "label": "4 Pillars — Encapsulation, Abstraction, Inheritance, Polymorphism" },
+        { "id": "oops-2", "label": "SOLID Principles" },
+        { "id": "oops-3", "label": "Design Patterns — Singleton, Factory, Observer" },
+        { "id": "oops-4", "label": "LLD — Parking Lot, BookMyShow" },
+        { "id": "oops-5", "label": "HLD — URL Shortener, Chat System" }
+      ]
+    }
+  ]
+}

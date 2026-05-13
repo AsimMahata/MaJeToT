@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 8% / 0.6;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 250 84% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 5% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 250 84% 65% / 0.15;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 20%;
+    --input: 240 5% 20%;
+    --ring: 250 84% 65%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 233 24% 9%;
+    --foreground: 210 20% 98%;
+    --card: 233 24% 12% / 0.6;
+    --card-foreground: 210 20% 98%;
+    --popover: 233 24% 12%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 262 80% 65%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 233 20% 18%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 233 20% 18%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 262 80% 65% / 0.15;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 350 80% 55%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 233 20% 20%;
+    --input: 233 20% 20%;
+    --ring: 262 80% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
+    background-attachment: fixed;
+  }
+  
+  /* Glassmorphism for shadcn cards */
+  .bg-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Progress bar animation */
+.progress-animate {
+  animation: progress-grow 0.6s ease-out forwards;
+}
+
+@keyframes progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Activity slide in */
+.activity-enter {
+  animation: slide-in-from-top 0.3s ease-out;
+}
