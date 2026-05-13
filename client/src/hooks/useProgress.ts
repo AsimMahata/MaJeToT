@@ -49,7 +49,7 @@ export function useProgress() {
 
       // Reset debounce
       if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(flush, 1500);
+      timerRef.current = setTimeout(flush, 5000);
     },
     [flush, updateLocal]
   );

@@ -35,9 +35,19 @@ function validateTemplate(schema: any): string | null {
     }
 
     if (section.lectures) {
-      if (typeof section.lectures !== 'object') return `Section "${section.id}": lectures must be an object`;
-      if (!section.lectures.label || typeof section.lectures.label !== 'string') return `Section "${section.id}": lectures must have a "label"`;
-      if (typeof section.lectures.total !== 'number' || section.lectures.total < 1) return `Section "${section.id}": lectures.total must be a positive number`;
+      if (Array.isArray(section.lectures)) {
+        for (const lecture of section.lectures) {
+          if (!lecture.id || typeof lecture.id !== 'string') return `Section "${section.id}": each lecture must have a string "id"`;
+          if (!lecture.label || typeof lecture.label !== 'string') return `Section "${section.id}": each lecture must have a string "label"`;
+          if (typeof lecture.total !== 'number' || lecture.total < 1) return `Section "${section.id}": lecture.total must be a positive number`;
+          if (ids.has(lecture.id)) return `Duplicate id: "${lecture.id}"`;
+          ids.add(lecture.id);
+        }
+      } else {
+        if (typeof section.lectures !== 'object') return `Section "${section.id}": lectures must be an object or array`;
+        if (!section.lectures.label || typeof section.lectures.label !== 'string') return `Section "${section.id}": lectures must have a "label"`;
+        if (typeof section.lectures.total !== 'number' || section.lectures.total < 1) return `Section "${section.id}": lectures.total must be a positive number`;
+      }
     }
   }
 
@@ -134,9 +144,6 @@ router.post('/:id/template', authMiddleware, upload.single('template'), async (r
     const user = req.user!;
     const group = await Group.findById(req.params.id);
     if (!group) return res.status(404).json({ error: 'Group not found' });
-    if (group.adminId.toString() !== user._id.toString()) {
-      return res.status(403).json({ error: 'Only the group admin can upload a template' });
-    }
 
     let schema: any;
     if (req.file) {

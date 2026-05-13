@@ -32,6 +32,10 @@ export default function SettingsPage() {
   const [templateUploaded, setTemplateUploaded] = useState(false);
   const [templateError, setTemplateError] = useState('');
 
+  const [userName, setUserName] = useState(user?.name || '');
+  const [telegramUsername, setTelegramUsername] = useState(user?.telegramUsername || user?.name || '');
+  const { setUser } = useAuthStore();
+
   useEffect(() => {
     if (!user?.groupId) return;
 
@@ -51,6 +55,19 @@ export default function SettingsPage() {
 
     load();
   }, [user?.groupId]);
+
+  const saveProfile = async () => {
+    setIsSaving(true);
+    try {
+      const { data } = await api.put('/auth/profile', { name: userName, telegramUsername });
+      setUser({ ...user!, ...data });
+      toast({ title: 'Profile saved!', variant: 'success' });
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.response?.data?.error || 'Failed to save profile', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const saveSettings = async () => {
     if (!user?.groupId) return;
@@ -106,6 +123,40 @@ export default function SettingsPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+        {/* Profile Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Your Profile</CardTitle>
+            <CardDescription>Update your personal details</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block" htmlFor="profile-name">Name</label>
+              <Input
+                id="profile-name"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block" htmlFor="profile-tg">Telegram Username</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                <Input
+                  id="profile-tg"
+                  value={telegramUsername}
+                  onChange={(e) => setTelegramUsername(e.target.value.replace(/^@/, ''))}
+                  className="pl-8"
+                />
+              </div>
+            </div>
+            <Button onClick={saveProfile} disabled={isSaving} className="w-full">
+              <Save className="w-4 h-4 mr-2" />
+              {isSaving ? 'Saving...' : 'Save Profile'}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Group Info */}
         <Card>
           <CardHeader>
@@ -119,7 +170,6 @@ export default function SettingsPage() {
                 id="settings-group-name"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
-                disabled={!isAdmin}
               />
             </div>
             <div>
@@ -144,8 +194,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Telegram Setup */}
-        {isAdmin && (
-          <Card>
+        <Card>
             <CardHeader>
               <CardTitle className="text-base">Telegram Integration</CardTitle>
               <CardDescription>Get AI-powered updates in your Telegram group</CardDescription>
@@ -192,11 +241,9 @@ export default function SettingsPage() {
               </Button>
             </CardContent>
           </Card>
-        )}
 
         {/* Re-upload template */}
-        {isAdmin && (
-          <Card>
+        <Card>
             <CardHeader>
               <CardTitle className="text-base">Curriculum Template</CardTitle>
               <CardDescription>Re-upload the curriculum JSON template</CardDescription>
@@ -241,7 +288,6 @@ export default function SettingsPage() {
               )}
             </CardContent>
           </Card>
-        )}
 
         {/* Members */}
         <Card>

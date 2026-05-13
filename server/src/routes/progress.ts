@@ -66,10 +66,12 @@ router.patch('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     // Collect deltas
     const delta: {
       topicsCompleted: string[];
+      topicsCompletedIds: { topicId: string, sectionId: string }[];
       topicsUnchecked: string[];
       lectureDeltas: Array<{ section: string; from: number; to: number; total: number }>;
     } = {
       topicsCompleted: [],
+      topicsCompletedIds: [],
       topicsUnchecked: [],
       lectureDeltas: [],
     };
@@ -92,6 +94,7 @@ router.patch('/', authMiddleware, async (req: AuthRequest, res: Response) => {
         if (nowChecked && !wasChecked) {
           const label = topicId ? (topicMap.get(topicId) || topicId) : sectionId;
           delta.topicsCompleted.push(label);
+          if (topicId) delta.topicsCompletedIds.push({ topicId, sectionId });
         } else if (!nowChecked && wasChecked) {
           const label = topicId ? (topicMap.get(topicId) || topicId) : sectionId;
           delta.topicsUnchecked.push(label);
@@ -196,6 +199,9 @@ router.patch('/', authMiddleware, async (req: AuthRequest, res: Response) => {
           const firstName = user.name.split(' ')[0];
           const aiMessage = completionMsg || await generateAIMessage(firstName, delta);
 
+          user.aiMessageCount = (user.aiMessageCount || 0) + 1;
+          await user.save();
+
           // Save activity
           const activity = await Activity.create({
             userId: user._id,
@@ -220,6 +226,31 @@ router.patch('/', authMiddleware, async (req: AuthRequest, res: Response) => {
           const group = await Group.findById(groupId);
           if (group?.telegramBotToken && group?.telegramChatId) {
             await sendTelegramMessage(group.telegramBotToken, group.telegramChatId, aiMessage);
+
+            // 10% probability tagging message or every 5th message
+            const shouldTag = (user.aiMessageCount % 5 === 0) || (Math.random() < 0.1);
+            if (shouldTag && delta.topicsCompletedIds.length > 0) {
+              const firstCompleted = delta.topicsCompletedIds[0];
+              const label = topicMap.get(firstCompleted.topicId) || firstCompleted.topicId;
+
+              const groupMembers = await User.find({ groupId });
+              const completedProgresses = await Progress.find({
+                 groupId,
+                 sectionId: firstCompleted.sectionId,
+                 topicId: firstCompleted.topicId,
+                 type: 'checkbox',
+                 checked: true
+              });
+              const completedUserIds = new Set(completedProgresses.map(p => p.userId.toString()));
+              
+              const incompleteUsers = groupMembers.filter(m => m._id.toString() !== user._id.toString() && !completedUserIds.has(m._id.toString()));
+
+              if (incompleteUsers.length > 0) {
+                 const tags = incompleteUsers.map(m => m.telegramUsername ? `@${m.telegramUsername}` : `@${m.name.replace(/\s+/g, '')}`).join(' ');
+                 const tagMessage = `Hey ${tags}, ${user.name} just completed "<b>${label}</b>". Don't get left behind! 👀🔥`;
+                 await sendTelegramMessage(group.telegramBotToken, group.telegramChatId, tagMessage);
+              }
+            }
           }
         } catch (err) {
           console.error('Async activity error:', err);

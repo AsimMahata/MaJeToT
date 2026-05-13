@@ -1,0 +1,25 @@
+{
+  "name": "majetot",
+  "version": "1.0.0",
+  "description": "A full-stack web app for a small group of friends (2–5 people) to track their placement preparation together. Users join a group, upload a JSON curriculum template, and track topic checkboxes + lecture counts per section. Progress updates trigger AI-generated motivational messages sent to a Telegram group.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently -n \"client,server\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsimMahata/MaJeToT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AsimMahata/MaJeToT/issues"
+  },
+  "homepage": "https://github.com/AsimMahata/MaJeToT#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

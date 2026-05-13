@@ -8,6 +8,7 @@ interface User {
   avatarColor: string;
   groupId: string | null;
   currentStreak: number;
+  telegramUsername?: string;
 }
 
 interface AuthState {

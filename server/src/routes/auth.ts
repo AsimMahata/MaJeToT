@@ -51,6 +51,7 @@ router.post('/signup', async (req: AuthRequest, res: Response) => {
         avatarColor: user.avatarColor,
         groupId: user.groupId,
         currentStreak: user.currentStreak,
+        telegramUsername: user.telegramUsername || user.name,
       },
     });
   } catch (error) {
@@ -89,6 +90,7 @@ router.post('/login', async (req: AuthRequest, res: Response) => {
         avatarColor: user.avatarColor,
         groupId: user.groupId,
         currentStreak: user.currentStreak,
+        telegramUsername: user.telegramUsername || user.name,
       },
     });
   } catch (error) {
@@ -108,9 +110,38 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
       avatarColor: user.avatarColor,
       groupId: user.groupId,
       currentStreak: user.currentStreak,
+      telegramUsername: user.telegramUsername || user.name,
     });
   } catch (error) {
     console.error('Me error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// PUT /api/auth/profile
+router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user!;
+    const { name, telegramUsername } = req.body;
+    
+    if (name) user.name = name.trim();
+    if (telegramUsername !== undefined) {
+       // if they clear it or type @name
+       user.telegramUsername = telegramUsername.trim().replace(/^@/, '');
+    }
+    
+    await user.save();
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatarColor: user.avatarColor,
+      groupId: user.groupId,
+      currentStreak: user.currentStreak,
+      telegramUsername: user.telegramUsername || user.name,
+    });
+  } catch (error) {
+    console.error('Profile error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
