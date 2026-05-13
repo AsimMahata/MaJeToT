@@ -20,7 +20,7 @@ interface TemplateSection {
   title: string;
   color: string;
   topics?: Array<{ id: string; label: string }>;
-  lectures?: { label: string; total: number };
+  lectures?: Array<{ id?: string | null; label: string; total: number }> | { label: string; total: number };
 }
 
 interface TemplateSchema {
@@ -100,19 +100,32 @@ export default function DashboardPage() {
     return () => { socket.off('new-activity', handler); };
   }, [socketRef.current]);
 
+  // Helper to get array format of lectures
+  const getLecturesList = (section: TemplateSection) => {
+    return Array.isArray(section.lectures) ? section.lectures : (section.lectures ? [{ id: null, ...section.lectures }] : []);
+  };
+
   // Compute per-section stats for current user
   const sectionStats = useMemo(() => {
     if (!template) return {};
-    const stats: Record<string, { topicsCompleted: number; lecturesDone: number }> = {};
+    const stats: Record<string, { topicsCompleted: number; lecturesDone: number; totalLectures: number }> = {};
 
     for (const section of template.sections) {
       const topicsCompleted = section.topics
         ? myProgress.filter(p => p.sectionId === section.id && p.type === 'checkbox' && p.checked).length
         : 0;
-      const lectureProgress = myProgress.find(p => p.sectionId === section.id && p.type === 'lecture' && !p.topicId);
-      const lecturesDone = lectureProgress?.lecturesDone || 0;
+      
+      let lecturesDone = 0;
+      let totalLectures = 0;
+      const lecturesList = getLecturesList(section);
+      
+      for (const l of lecturesList) {
+        totalLectures += l.total;
+        const lp = myProgress.find(p => p.sectionId === section.id && p.type === 'lecture' && (l.id ? p.topicId === l.id : !p.topicId));
+        lecturesDone += lp?.lecturesDone || 0;
+      }
 
-      stats[section.id] = { topicsCompleted, lecturesDone };
+      stats[section.id] = { topicsCompleted, lecturesDone, totalLectures };
     }
     return stats;
   }, [template, myProgress]);
@@ -131,10 +144,9 @@ export default function DashboardPage() {
         totalItems += section.topics.length;
         completedItems += stats.topicsCompleted;
       }
-      if (section.lectures) {
-        totalItems += section.lectures.total;
-        completedItems += stats.lecturesDone;
-      }
+      
+      totalItems += stats.totalLectures;
+      completedItems += stats.lecturesDone;
     }
 
     return totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
@@ -155,12 +167,12 @@ export default function DashboardPage() {
             p => p.userId === member._id && p.sectionId === section.id && p.type === 'checkbox' && p.checked
           ).length;
         }
-        if (section.lectures) {
-          total += section.lectures.total;
-          const lp = groupProgress.find(
-            p => p.userId === member._id && p.sectionId === section.id && p.type === 'lecture' && !p.topicId
-          );
-          completed += lp?.lecturesDone || 0;
+        
+        const lecturesList = getLecturesList(section);
+        for (const l of lecturesList) {
+           total += l.total;
+           const lp = groupProgress.find(p => p.userId === member._id && p.sectionId === section.id && p.type === 'lecture' && (l.id ? p.topicId === l.id : !p.topicId));
+           completed += lp?.lecturesDone || 0;
         }
       }
       result[member._id] = total > 0 ? (completed / total) * 100 : 0;
@@ -175,13 +187,22 @@ export default function DashboardPage() {
       const topicsCompleted = section.topics
         ? groupProgress.filter(p => p.userId === memberId && p.sectionId === section.id && p.type === 'checkbox' && p.checked).length
         : 0;
-      const lp = groupProgress.find(p => p.userId === memberId && p.sectionId === section.id && p.type === 'lecture' && !p.topicId);
+        
+      let lecturesDone = 0;
+      let totalLectures = 0;
+      const lecturesList = getLecturesList(section);
+      for (const l of lecturesList) {
+         totalLectures += l.total;
+         const lp = groupProgress.find(p => p.userId === memberId && p.sectionId === section.id && p.type === 'lecture' && (l.id ? p.topicId === l.id : !p.topicId));
+         lecturesDone += lp?.lecturesDone || 0;
+      }
+      
       return {
         ...section,
         topicsCompleted,
         totalTopics: section.topics?.length || 0,
-        lecturesDone: lp?.lecturesDone || 0,
-        totalLectures: section.lectures?.total || 0,
+        lecturesDone,
+        totalLectures,
       };
     });
   };
@@ -205,8 +226,11 @@ export default function DashboardPage() {
         md += '\n';
       }
 
-      if (section.lectures) {
-        md += `### ${section.lectures.label} (${stats?.lecturesDone || 0}/${section.lectures.total})\n\n`;
+      const lecturesList = getLecturesList(section);
+      for (const l of lecturesList) {
+         const lp = myProgress.find(p => p.sectionId === section.id && p.type === 'lecture' && (l.id ? p.topicId === l.id : !p.topicId));
+         const done = lp?.lecturesDone || 0;
+         md += `### ${l.label} (${done}/${l.total})\n\n`;
       }
     }
 
