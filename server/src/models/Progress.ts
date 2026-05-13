@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
-export interface IProgress extends Document {
+export interface IProgress {
+  _id: Types.ObjectId;
   userId: Types.ObjectId;
   groupId: string;
   sectionId: string;

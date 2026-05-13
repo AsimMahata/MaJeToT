@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface ITemplate extends Document {
+export interface ITemplate {
   groupId: string;
   schema: Record<string, any>;
   updatedAt: Date;

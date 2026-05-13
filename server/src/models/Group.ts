@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
-export interface IGroup extends Document {
+export interface IGroup {
   _id: string;
   name: string;
   adminId: Types.ObjectId;
