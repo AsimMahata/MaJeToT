@@ -4,6 +4,7 @@ export interface ITemplate {
   groupId: string;
   schema: Record<string, any>;
   updatedAt: Date;
+  save(): Promise<this>;
 }
 
 const templateSchema = new Schema<ITemplate>({

@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
-export interface IActivity {
-  _id: Types.ObjectId;
+export interface IActivity extends Document {
   userId: Types.ObjectId;
   groupId: string;
   userName: string;

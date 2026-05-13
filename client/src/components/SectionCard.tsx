@@ -8,16 +8,16 @@ interface SectionCardProps {
     title: string;
     color: string;
     topics?: Array<{ id: string; label: string }>;
-    lectures?: { label: string; total: number };
+    lectures?: Array<{ id?: string | null; label: string; total: number }> | { label: string; total: number };
   };
   topicsCompleted: number;
   lecturesDone: number;
+  totalLectures?: number;
 }
 
-export default function SectionCard({ section, topicsCompleted, lecturesDone }: SectionCardProps) {
+export default function SectionCard({ section, topicsCompleted, lecturesDone, totalLectures = 0 }: SectionCardProps) {
   const navigate = useNavigate();
   const totalTopics = section.topics?.length || 0;
-  const totalLectures = section.lectures?.total || 0;
 
   let overallPct = 0;
   let parts = 0;
@@ -59,7 +59,7 @@ export default function SectionCard({ section, topicsCompleted, lecturesDone }: 
           {totalLectures > 0 && (
             <div>
               <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                <span>{section.lectures!.label}</span>
+                <span>Lectures</span>
                 <span>{lecturesDone} / {totalLectures}</span>
               </div>
               <Progress

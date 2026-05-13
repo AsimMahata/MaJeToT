@@ -7,6 +7,7 @@ export interface IGroup {
   telegramBotToken: string;
   telegramChatId: string;
   createdAt: Date;
+  save(): Promise<this>;
 }
 
 const groupSchema = new Schema<IGroup>({

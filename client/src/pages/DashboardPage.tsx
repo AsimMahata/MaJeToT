@@ -76,7 +76,7 @@ export default function DashboardPage() {
         setActivities(activityRes.data || []);
 
         await fetchMyProgress();
-        await fetchGroupProgress(user.groupId);
+        await fetchGroupProgress(user!.groupId!);
       } catch (err) {
         console.error('Failed to load dashboard:', err);
       } finally {
@@ -331,6 +331,7 @@ export default function DashboardPage() {
                       section={section}
                       topicsCompleted={sectionStats[section.id]?.topicsCompleted || 0}
                       lecturesDone={sectionStats[section.id]?.lecturesDone || 0}
+                      totalLectures={sectionStats[section.id]?.totalLectures || 0}
                     />
                   ))}
                 </div>

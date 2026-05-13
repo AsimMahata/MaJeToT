@@ -65,7 +65,7 @@ export default function SectionPage() {
         setGroupAdminId(groupRes.data.adminId);
 
         await fetchMyProgress();
-        await fetchGroupProgress(user.groupId);
+        await fetchGroupProgress(user!.groupId!);
       } catch (err) {
         console.error('Failed to load section:', err);
       } finally {
