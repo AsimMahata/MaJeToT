@@ -8,6 +8,7 @@ export function initSocket(httpServer: HttpServer, frontendUrl: string): SocketI
     cors: {
       origin: frontendUrl,
       methods: ['GET', 'POST'],
+      credentials: true,
     },
   });
 

@@ -13,7 +13,10 @@ const app = express();
 const httpServer = createServer(app);
 
 const PORT = process.env.PORT || 4000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = (process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173').replace(
+  /\/+$/,
+  '',
+);
 
 // Middleware
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
